@@ -1,0 +1,213 @@
+@{
+    ViewData["Title"] = "Settings";
+}
+
+<div class="settings-page">
+
+    <div class="settings-header">
+        <div>
+            <div class="brand">PLAY <span>GAMES</span></div>
+            <h1>Settings</h1>
+            <p>Manage your Play Games experience.</p>
+        </div>
+
+        <a href="/" class="back-button">← Back to Store</a>
+    </div>
+
+    <div class="settings-grid">
+
+        <section class="settings-card">
+            <div class="settings-icon">👤</div>
+            <h2>Account</h2>
+            <p>Manage your Play Games account.</p>
+            <button>Manage Account</button>
+        </section>
+
+        <section class="settings-card">
+            <div class="settings-icon">🎮</div>
+            <h2>Gaming</h2>
+            <p>Configure your gaming experience.</p>
+            <button>Configure</button>
+        </section>
+
+        <section class="settings-card">
+            <div class="settings-icon">⬇️</div>
+            <h2>Downloads</h2>
+            <p>Manage game downloads and updates.</p>
+            <button>Manage</button>
+        </section>
+
+        <section class="settings-card">
+            <div class="settings-icon">🔔</div>
+            <h2>Notifications</h2>
+            <p>Control Play Games notifications.</p>
+            <button>Configure</button>
+        </section>
+
+        <section class="settings-card">
+            <div class="settings-icon">🌐</div>
+            <h2>Language</h2>
+            <p>Choose your interface language.</p>
+            <button>English</button>
+        </section>
+
+        <section class="settings-card">
+            <div class="settings-icon">🎨</div>
+            <h2>Appearance</h2>
+            <p>Customize the Play Games interface.</p>
+            <button>Dark Mode</button>
+        </section>
+
+        <section class="settings-card">
+            <div class="settings-icon">🔐</div>
+            <h2>Security</h2>
+            <p>Manage your account security.</p>
+            <button>Security</button>
+        </section>
+
+        <section class="settings-card">
+            <div class="settings-icon">💳</div>
+            <h2>Payments</h2>
+            <p>View purchases and payment information.</p>
+            <button>Payments</button>
+        </section>
+
+        <section class="settings-card">
+            <div class="settings-icon">ℹ️</div>
+            <h2>About Play Games</h2>
+            <p>Version and platform information.</p>
+            <button>View Information</button>
+        </section>
+
+    </div>
+
+</div>
+
+<style>
+    .settings-page {
+        min-height: 100vh;
+        padding: 45px;
+        background: #07111d;
+        color: white;
+    }
+
+    .settings-header {
+        max-width: 1150px;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 35px;
+    }
+
+    .brand {
+        font-size: 14px;
+        font-weight: 900;
+        letter-spacing: 3px;
+        color: #ffffff;
+    }
+
+    .brand span {
+        color: #24a8ff;
+    }
+
+    .settings-header h1 {
+        margin: 12px 0 5px;
+        font-size: 36px;
+    }
+
+    .settings-header p {
+        margin: 0;
+        color: #7f94a9;
+    }
+
+    .back-button {
+        padding: 11px 17px;
+        border-radius: 10px;
+        background: #0e2134;
+        border: 1px solid rgba(255,255,255,.08);
+        color: #a9bdd0;
+        text-decoration: none;
+    }
+
+    .back-button:hover {
+        background: #12304a;
+        color: white;
+    }
+
+    .settings-grid {
+        max-width: 1150px;
+        margin: auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+
+    .settings-card {
+        padding: 24px;
+        min-height: 190px;
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,.07);
+        background: linear-gradient(145deg,#0d1c2c,#091522);
+        box-shadow: 0 15px 40px rgba(0,0,0,.25);
+        transition: .2s;
+    }
+
+    .settings-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(35,164,255,.35);
+    }
+
+    .settings-icon {
+        width: 45px;
+        height: 45px;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        background: rgba(35,164,255,.12);
+        font-size: 21px;
+        margin-bottom: 15px;
+    }
+
+    .settings-card h2 {
+        margin: 0 0 7px;
+        font-size: 18px;
+    }
+
+    .settings-card p {
+        min-height: 38px;
+        margin: 0 0 18px;
+        color: #7f94a9;
+        font-size: 13px;
+    }
+
+    .settings-card button {
+        padding: 9px 13px;
+        border-radius: 9px;
+        border: 1px solid rgba(35,164,255,.3);
+        background: #0d2b43;
+        color: #59bcff;
+        cursor: pointer;
+    }
+
+    .settings-card button:hover {
+        background: #123e5d;
+        color: white;
+    }
+
+    @@media(max-width:850px) {
+        .settings-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .settings-page {
+            padding: 25px;
+        }
+
+        .settings-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 20px;
+        }
+    }
+</style>

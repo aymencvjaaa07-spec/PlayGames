@@ -1,0 +1,234 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using PlayGames.Models
+@inject SignInManager<ApplicationUser> SignInManager
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Play Games</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        :root {
+            --blue: #1a9fff;
+            --blue2: #5bc0ff;
+            --bg: #080d18;
+            --panel: #101e2d;
+            --text: #f3f7fb;
+            --muted: #8da1b6;
+            --line: rgba(255,255,255,.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .pg-nav {
+            height: 76px;
+            background: rgba(8,13,24,.96);
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(16px);
+        }
+
+        .pg-logo {
+            color: white;
+            text-decoration: none;
+            font-size: 25px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            margin-right: 45px;
+        }
+
+        .pg-logo span {
+            color: var(--blue);
+        }
+
+        .pg-links {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex: 1;
+        }
+
+        .pg-links a,
+        .pg-account {
+            color: var(--muted);
+            text-decoration: none;
+            padding: 11px 15px;
+            border-radius: 10px;
+            transition: .2s;
+        }
+
+        .pg-links a:hover,
+        .pg-account:hover {
+            color: white;
+            background: rgba(26,159,255,.1);
+        }
+
+        .pg-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pg-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg,#1a9fff,#1765ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: white;
+        }
+
+        .pg-login {
+            background: var(--blue);
+            color: white !important;
+            font-weight: 700;
+            padding: 11px 20px !important;
+        }
+
+        .pg-login:hover {
+            background: #078bea !important;
+        }
+
+        .pg-main {
+            min-height: calc(100vh - 140px);
+        }
+
+        .pg-footer {
+            border-top: 1px solid var(--line);
+            padding: 25px 32px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .pg-footer a {
+            color: var(--blue2);
+            text-decoration: none;
+        }
+
+        @@media (max-width: 800px) {
+            .pg-nav {
+                padding: 0 15px;
+            }
+
+            .pg-logo {
+                margin-right: 15px;
+                font-size: 20px;
+            }
+
+            .pg-links a {
+                padding: 8px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="pg-nav">
+
+        <a class="pg-logo"
+           asp-area=""
+           asp-controller="Home"
+           asp-action="Index">
+            PLAY<span>GAMES</span>
+        </a>
+
+        <nav class="pg-links">
+            <a asp-area=""
+               asp-controller="Home"
+               asp-action="Index">
+                Home
+            </a>
+
+            <a asp-area=""
+               asp-controller="Games"
+               asp-action="Index">
+                Store
+            </a>
+
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <a asp-area=""
+                   asp-controller="Account"
+                   asp-action="Index">
+                    My Account
+                </a>
+
+                <a asp-area=""
+                   asp-controller="Settings"
+                   asp-action="Index">
+                    Settings
+                </a>
+            }
+        </nav>
+
+        <div class="pg-user">
+
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <a class="pg-account"
+                   asp-area=""
+                   asp-controller="Account"
+                   asp-action="Index">
+                    <span class="pg-avatar">
+                        @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "P")
+                    </span>
+                </a>
+            }
+            else
+            {
+                <a class="pg-login"
+                   asp-area="Identity"
+                   asp-page="/Account/Login">
+                    Sign In
+                </a>
+            }
+
+        </div>
+
+    </header>
+
+    <main class="pg-main">
+        @RenderBody()
+    </main>
+
+    <footer class="pg-footer">
+        © 2026 Play Games ·
+        <a asp-area=""
+           asp-controller="Home"
+           asp-action="Privacy">
+            Privacy
+        </a>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

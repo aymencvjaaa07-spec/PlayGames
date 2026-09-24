@@ -1,0 +1,146 @@
+@model List<PlayGames.Models.Game>
+
+@{
+    ViewData["Title"] = "Game Store";
+}
+
+<style>
+    .store-page {
+        padding: 30px;
+        color: #f3f7fb;
+    }
+
+    .store-title {
+        font-size: 34px;
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+
+    .store-subtitle {
+        color: #8da1b6;
+        margin-bottom: 28px;
+    }
+
+    .games-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 22px;
+    }
+
+    .game-card {
+        background: #101e2d;
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 18px;
+        overflow: hidden;
+        transition: .25s ease;
+    }
+
+    .game-card:hover {
+        transform: translateY(-6px);
+        border-color: #1a9fff;
+        box-shadow: 0 18px 45px rgba(26,159,255,.18);
+    }
+
+    .game-image {
+        width: 100%;
+        height: 270px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .game-info {
+        padding: 17px;
+    }
+
+    .game-name {
+        font-size: 19px;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .game-genre {
+        color: #8da1b6;
+        font-size: 13px;
+        margin-bottom: 15px;
+    }
+
+    .game-price {
+        color: #5bc0ff;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .old-price {
+        color: #718297;
+        text-decoration: line-through;
+        font-size: 13px;
+        margin-left: 8px;
+        font-weight: 400;
+    }
+
+    .empty-store {
+        padding: 50px;
+        text-align: center;
+        background: #101e2d;
+        border-radius: 18px;
+        color: #8da1b6;
+    }
+</style>
+
+<div class="store-page">
+
+    <div class="store-title">Game Store</div>
+
+    <div class="store-subtitle">
+        Discover your next game.
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="empty-store">
+            No games available yet.
+        </div>
+    }
+    else
+    {
+        <div class="games-grid">
+
+            @foreach (var game in Model)
+            {
+                <div class="game-card">
+
+                    <img class="game-image"
+                         src="@game.ImageUrl"
+                         alt="@game.Name">
+
+                    <div class="game-info">
+
+                        <div class="game-name">
+                            @game.Name
+                        </div>
+
+                        <div class="game-genre">
+                            @game.Genre
+                        </div>
+
+                        <div class="game-price">
+                            @(game.DiscountPrice > 0
+                                ? $"{game.DiscountPrice:0.00} DA"
+                                : $"{game.Price:0.00} DA")
+
+                            @if (game.DiscountPrice > 0 && game.Price > game.DiscountPrice)
+                            {
+                                <span class="old-price">
+                                    @($"{game.Price:0.00} DA")
+                                </span>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            }
+
+        </div>
+    }
+
+</div>

@@ -1,0 +1,325 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Play Games Â· Store</title>
+
+    <style>
+        .account-actions{
+    margin-left:auto;
+    display:flex;
+    align-items:center;
+}
+
+.logout-btn{
+    height:38px;
+    padding:0 16px;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:10px;
+    background:rgba(255,255,255,.045);
+    color:#9fb0c2;
+    cursor:pointer;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.06em;
+    transition:.18s ease;
+}
+
+.logout-btn:hover{
+    background:rgba(255,80,100,.10);
+    border-color:rgba(255,100,120,.25);
+    color:#ff9baa;
+}
+        :root{
+            --bg:#07111b;
+            --bg2:#0b1724;
+            --panel:#101e2d;
+            --panel2:#12253a;
+            --line:rgba(255,255,255,.08);
+            --text:#f3f7fb;
+            --muted:#8da1b6;
+            --blue:#1a9fff;
+            --blue2:#5bc0ff;
+            --green:#58dda4;
+        }
+
+        *{box-sizing:border-box}
+        html,body{margin:0;min-height:100%}
+
+        body{
+            min-height:100vh;
+            color:var(--text);
+            font-family:"Segoe UI",Arial,sans-serif;
+            background:
+                radial-gradient(circle at 12% 0%,rgba(26,159,255,.16),transparent 30%),
+                linear-gradient(180deg,#081522 0%,#050c14 100%);
+        }
+
+        a{color:inherit;text-decoration:none}
+
+        .topbar{
+            position:sticky;top:0;z-index:30;height:72px;
+            display:flex;align-items:center;gap:35px;padding:0 5vw;
+            background:rgba(4,10,17,.88);
+            border-bottom:1px solid var(--line);
+            backdrop-filter:blur(18px)
+        }
+
+        .brand{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:900;letter-spacing:.12em}
+        .logo{width:38px;height:38px;display:grid;place-items:center;border-radius:11px;
+              background:linear-gradient(145deg,var(--blue2),#0874c4);
+              box-shadow:0 10px 30px rgba(26,159,255,.25)}
+        .nav{display:flex;gap:25px;color:#8fa2b6;font-size:12px;font-weight:700}
+        .nav a:hover{color:#fff}
+
+        .container{width:min(1200px,92%);margin:0 auto;padding:30px 0 70px}
+
+        .hero{
+            min-height:270px;position:relative;overflow:hidden;
+            display:flex;align-items:flex-end;padding:42px;
+            border:1px solid var(--line);border-radius:22px;
+            background:
+                radial-gradient(circle at 78% 20%,rgba(71,188,255,.28),transparent 28%),
+                linear-gradient(135deg,#123754,#0a1c2c 55%,#07111b)
+        }
+        .hero:after{content:"PLAY GAMES";position:absolute;right:-25px;bottom:-48px;
+                    color:rgba(255,255,255,.025);font-size:105px;font-weight:900;letter-spacing:-.08em}
+        .hero-content{position:relative;z-index:2;max-width:690px}
+        .badge{display:inline-block;padding:7px 11px;border-radius:999px;
+               color:#b8e6ff;background:rgba(26,159,255,.09);
+               border:1px solid rgba(91,192,255,.18);font-size:10px;font-weight:800;letter-spacing:.12em}
+        .hero h1{margin:16px 0 11px;font-size:clamp(38px,5vw,60px);letter-spacing:-.05em;line-height:1}
+        .hero p{margin:0;color:#9db1c3;font-size:14px;line-height:1.75}
+
+        .search-box{
+            margin-top:24px;padding:15px;border:1px solid var(--line);border-radius:18px;
+            background:rgba(12,28,44,.84);box-shadow:0 20px 45px rgba(0,0,0,.18)
+        }
+        .search-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px}
+        .search-input{width:100%;height:50px;padding:0 16px;border:1px solid rgba(255,255,255,.08);
+                      border-radius:11px;background:rgba(0,0,0,.2);color:#fff;outline:none;font-size:14px}
+        .search-input:focus{border-color:rgba(91,192,255,.7);box-shadow:0 0 0 4px rgba(26,159,255,.08)}
+        .filter{height:50px;padding:0 14px;border:1px solid rgba(255,255,255,.08);border-radius:11px;
+                background:#0c1825;color:#b5c5d5;outline:none;font-size:12px}
+        .clear{height:50px;padding:0 16px;border:0;border-radius:11px;background:#16324b;color:#a9c7de;cursor:pointer;font-weight:700}
+        .clear:hover{background:#1b4667;color:#fff}
+        .search-info{display:flex;justify-content:space-between;gap:12px;margin-top:10px;color:#71869b;font-size:11px}
+
+        .section-head{display:flex;align-items:end;justify-content:space-between;margin:36px 0 17px}
+        .section-head h2{margin:0;font-size:23px;letter-spacing:-.025em}
+        .section-head span{color:#6e8398;font-size:11px}
+
+        .games{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}
+        .game-card{overflow:hidden;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#112336,#091523);
+                   transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+        .game-card:hover{transform:translateY(-4px);border-color:rgba(91,192,255,.23);box-shadow:0 25px 55px rgba(0,0,0,.28)}
+        .game-cover{height:220px;position:relative;display:flex;align-items:flex-end;padding:22px;
+                    background:radial-gradient(circle at 72% 20%,rgba(77,191,255,.45),transparent 25%),
+                               radial-gradient(circle at 25% 65%,rgba(24,103,190,.35),transparent 35%),
+                               linear-gradient(135deg,#0e3d59,#07111c 75%)}
+        .free-badge{position:absolute;right:15px;top:15px;padding:7px 9px;border-radius:8px;background:var(--green);color:#041d12;font-size:10px;font-weight:900;letter-spacing:.08em}
+        .game-cover small{color:#afd9ee;font-size:9px;font-weight:800;letter-spacing:.13em}
+        .game-cover h3{margin:7px 0 0;font-size:27px;letter-spacing:-.035em}
+        .game-body{padding:21px}
+        .game-body h4{margin:0 0 8px;font-size:18px}
+        .game-body p{margin:0 0 16px;color:#879caf;font-size:12px;line-height:1.65;min-height:60px}
+        .tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:17px}
+        .tag{padding:6px 8px;border:1px solid rgba(255,255,255,.07);border-radius:7px;color:#91a7ba;font-size:10px}
+        .get-btn{display:flex;align-items:center;justify-content:center;height:46px;border-radius:10px;background:linear-gradient(135deg,#49b8ff,#0876c8);font-size:11px;font-weight:900;letter-spacing:.04em}
+        .get-btn:hover{filter:brightness(1.06)}
+
+        .empty{display:none;margin-top:17px;padding:34px;text-align:center;border:1px dashed rgba(255,255,255,.08);border-radius:17px;color:#758a9f;background:rgba(255,255,255,.015)}
+        .empty strong{display:block;margin-bottom:7px;color:#c5d2de;font-size:15px}
+
+        .footer{margin-top:45px;padding-top:18px;border-top:1px solid var(--line);color:#5e7287;font-size:10px;text-align:center}
+
+        @@media (max-width:900px){
+            .games{grid-template-columns:repeat(2,minmax(0,1fr))}
+            .search-row{grid-template-columns:1fr 1fr}
+            .search-input{grid-column:1/-1}
+            .hero{padding:31px}
+        }
+        @@media (max-width:600px){
+            .topbar{padding:0 18px}.nav{display:none}
+            .container{width:94%;padding-top:18px}
+            .hero{padding:26px;min-height:245px}
+            .hero h1{font-size:40px}
+            .games{grid-template-columns:1fr}
+            .search-row{grid-template-columns:1fr}
+            .search-input{grid-column:auto}
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <a href="/" class="brand">
+            <span class="logo">P</span>
+            PLAY GAMES
+        </a>
+        <nav class="nav">
+            <a href="/">STORE</a>
+            <a href="#free">FREE GAMES</a>
+            <a href="#library">LIBRARY</a>
+        </nav>
+        <div class="account-actions">
+    <form asp-area="Identity"
+          asp-controller="Account" asp-action="Logout"
+          asp-route-returnUrl="/"
+          method="post">
+        <button type="submit" class="logout-btn">
+            SIGN OUT
+        </button>
+    </form>
+</div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <div class="hero-content">
+                <span class="badge">PREMIUM GAMING STORE</span>
+                <h1>Find your next game.</h1>
+                <p>Search Play Games by title, genre, platform or keywords and discover your next digital purchase.</p>
+            </div>
+        </section>
+
+        <section class="search-box" aria-label="Game search">
+            <div class="search-row">
+                <input id="gameSearch" class="search-input" type="search" autocomplete="off"
+                       placeholder="Search games, genres, platforms..." />
+                <select id="genreFilter" class="filter">
+                    <option value="">All genres</option>
+                    <option value="action">Action</option>
+                    <option value="racing">Racing</option>
+                    <option value="adventure">Adventure</option>
+                    <option value="strategy">Strategy</option>
+                </select>
+                <button id="clearSearch" class="clear" type="button">CLEAR</button>
+            </div>
+            <div class="search-info">
+                <span id="searchStatus">Showing all games</span>
+                <span id="gameCount">1 game</span>
+            </div>
+        </section>
+
+        <div id="free" class="section-head">
+            <h2>Free Game</h2>
+            <span>Featured on Play Games</span>
+        </div>
+
+        <section id="gameGrid" class="games">
+            <article class="game-card" data-search="free game 1 free pc digital action adventure featured" data-genre="action">
+                <div class="game-cover">
+                    <span class="free-badge">FREE</span>
+                    <div>
+                        <small>PLAY GAMES Â· FREE EDITION</small>
+                        <h3>Free Game #1</h3>
+                    </div>
+                </div>
+                <div class="game-body">
+                    <h4>Free Game #1</h4>
+                    <p>The first free title in your Play Games store. Replace this information later with the real game's name, artwork and description.</p>
+                    <div class="tags">
+                        <span class="tag">FREE</span>
+                        <span class="tag">PC</span>
+                        <span class="tag">ACTION</span>
+                        <span class="tag">DIGITAL</span>
+                    </div>
+                    <a class="get-btn" href="#library">GET FOR FREE</a>
+                </div>
+            </article>
+        </section>
+
+        <div id="searchEmpty" class="empty">
+            <strong>No games found</strong>
+            Try another title, genre or platform.
+        </div>
+
+        <div id="library" class="section-head">
+            <h2>Your Library</h2>
+            <span>Sign-in library</span>
+        </div>
+
+        <footer class="footer">Play Games Â· Secure digital game store</footer>
+    </main>
+
+    <script>
+        const searchInput = document.getElementById('gameSearch');
+        const genreFilter = document.getElementById('genreFilter');
+        const clearSearch = document.getElementById('clearSearch');
+        const cards = Array.from(document.querySelectorAll('.game-card'));
+        const searchStatus = document.getElementById('searchStatus');
+        const gameCount = document.getElementById('gameCount');
+        const empty = document.getElementById('searchEmpty');
+
+        function normalize(value) {
+            return (value || '').toLowerCase().trim();
+        }
+
+        function runSearch() {
+            const query = normalize(searchInput.value);
+            const genre = normalize(genreFilter.value);
+            const words = query.split(/\s+/).filter(Boolean);
+            let visible = 0;
+
+            cards.forEach(card => {
+                const haystack = normalize(card.dataset.search || card.textContent);
+                const cardGenre = normalize(card.dataset.genre);
+                const textMatches = words.length === 0 || words.every(word => haystack.includes(word));
+                const genreMatches = !genre || cardGenre === genre;
+                const match = textMatches && genreMatches;
+
+                card.style.display = match ? '' : 'none';
+                if (match) visible++;
+            });
+
+            const total = cards.length;
+            gameCount.textContent = `${visible} / ${total} games`;
+            searchStatus.textContent = query || genre
+                ? `Results: ${visible}`
+                : 'Showing all games';
+            empty.style.display = visible === 0 ? 'block' : 'none';
+        }
+
+        searchInput.addEventListener('input', runSearch);
+        genreFilter.addEventListener('change', runSearch);
+        clearSearch.addEventListener('click', () => {
+            searchInput.value = '';
+            genreFilter.value = '';
+            searchInput.focus();
+            runSearch();
+        });
+
+        runSearch();
+    </script>
+    <div style="position:fixed;top:88px;right:30px;z-index:9999;">
+    <form asp-controller="Account" asp-action="Logout" method="post">
+        @Html.AntiForgeryToken()
+
+        <input type="hidden"
+               name="returnUrl"
+               value="/Identity/Account/Login" />
+
+        <button type="submit"
+                style="
+                    padding:11px 18px;
+                    border:1px solid rgba(255,255,255,.12);
+                    border-radius:10px;
+                    background:#122235;
+                    color:#b8c8d8;
+                    cursor:pointer;
+                    font-size:11px;
+                    font-weight:800;
+                    letter-spacing:.08em;
+                ">
+            SIGN OUT
+        </button>
+    </form>
+</div>
+</body>
+</html>
+
