@@ -48,10 +48,14 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    GameSeeder.Seed(
-        scope.ServiceProvider.GetRequiredService<StoreDbContext>());
-}
+    var storeDb = scope.ServiceProvider.GetRequiredService<StoreDbContext>();
+    var identityDb = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
+    storeDb.Database.Migrate();
+    identityDb.Database.Migrate();
+
+    GameSeeder.Seed(storeDb);
+}
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -74,4 +78,7 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
+
+
+
 
