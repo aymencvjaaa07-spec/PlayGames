@@ -1,0 +1,48 @@
+﻿@model List<PlayGames.Models.Game>
+
+@{
+    ViewData["Title"] = "My Library";
+}
+
+<div style="max-width:1200px;margin:40px auto;padding:0 24px;color:#fff;">
+    <h1 style="font-size:34px;margin-bottom:8px;">My Library</h1>
+    <p style="color:#8da1b6;margin-bottom:30px;">
+        Your games are connected to your Play Games account.
+    </p>
+
+    @if (Model.Count == 0)
+    {
+        <div style="padding:50px;text-align:center;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:#101e2d;color:#8095a9;">
+            Your library is empty.
+        </div>
+    }
+    else
+    {
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;">
+            @foreach (var game in Model)
+            {
+                <div style="overflow:hidden;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:#101e2d;">
+                    <img src="@game.ImageUrl"
+                         alt="@game.Name"
+                         style="width:100%;height:220px;object-fit:cover;background:#08121d;" />
+
+                    <div style="padding:18px;">
+                        <h2 style="margin:0 0 7px;font-size:19px;">@game.Name</h2>
+
+                        <p style="color:#8499ad;font-size:12px;min-height:40px;">
+                            @game.Description
+                        </p>
+
+                        @if (!string.IsNullOrWhiteSpace(game.DownloadUrl))
+                        {
+                            <a href="playgames://install/@game.Id"
+                               style="display:flex;align-items:center;justify-content:center;height:45px;border-radius:10px;background:linear-gradient(135deg,#49b8ff,#0876c8);color:#fff;text-decoration:none;font-size:11px;font-weight:900;">
+                                DOWNLOAD
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

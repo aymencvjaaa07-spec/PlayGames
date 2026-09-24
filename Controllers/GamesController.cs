@@ -1,6 +1,8 @@
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlayGames.Data;
+using PlayGames.Models;
 
 namespace PlayGames.Controllers;
 
@@ -13,13 +15,32 @@ public class GamesController : Controller
         _db = db;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int? install = null)
     {
-        var games = await _db.Games
-            .Where(g => g.IsActive)
-            .OrderBy(g => g.Name)
-            .ToListAsync();
+        var model = new GameStoreViewModel
+        {
+            Games = await _db.Games
+                .Where(x => x.IsActive)
+                .OrderBy(x => x.Name)
+                .ToListAsync(),
+            AutoInstallId = install
+        };
 
-        return View(games);
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!string.IsNullOrWhiteSpace(userId))
+            {
+                model.OwnedGameIds = (
+                    await _db.LibraryItems
+                        .Where(x => x.UserId == userId)
+                        .Select(x => x.GameId)
+                        .ToListAsync()
+                ).ToHashSet();
+            }
+        }
+
+        return View(model);
     }
 }

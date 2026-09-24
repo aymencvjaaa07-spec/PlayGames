@@ -309,3 +309,4 @@ D:\PlayGames\PlayGames\PlayGames\obj\Debug\net10.0\refint\PlayGames.dll
 D:\PlayGames\PlayGames\PlayGames\obj\Debug\net10.0\PlayGames.pdb
 D:\PlayGames\PlayGames\PlayGames\obj\Debug\net10.0\PlayGames.genruntimeconfig.cache
 D:\PlayGames\PlayGames\PlayGames\obj\Debug\net10.0\ref\PlayGames.dll
+D:\PlayGames\PlayGames\PlayGames\obj\Debug\net10.0\PlayGames.sourcelink.json

@@ -1,4 +1,4 @@
-﻿namespace PlayGames.Models;
+namespace PlayGames.Models;
 
 public class Game
 {
@@ -10,10 +10,4 @@ public class Game
     public string ImageUrl { get; set; } = "";
     public string Genre { get; set; } = "";
     public bool IsActive { get; set; } = true;
-
-    public string? DownloadUrl { get; set; }
-    public string? DownloadSha512 { get; set; }
-    public string? InstallFolder { get; set; }
-    public string? ExecutablePath { get; set; }
 }
-

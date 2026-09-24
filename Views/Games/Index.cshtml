@@ -1,146 +1,96 @@
-@model List<PlayGames.Models.Game>
+﻿@model PlayGames.Models.GameStoreViewModel
 
 @{
-    ViewData["Title"] = "Game Store";
+    ViewData["Title"] = "Games";
 }
 
-<style>
-    .store-page {
-        padding: 30px;
-        color: #f3f7fb;
-    }
+<div style="max-width:1200px;margin:35px auto;padding:0 24px;color:#fff;">
+    <h1 style="font-size:34px;margin-bottom:7px;">Game Store</h1>
+    <p style="color:#8da1b6;margin-bottom:28px;">
+        Discover games and build your personal library.
+    </p>
 
-    .store-title {
-        font-size: 34px;
-        font-weight: 800;
-        margin-bottom: 6px;
-    }
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px;">
+        @foreach (var game in Model.Games)
+        {
+            var owned = Model.OwnedGameIds.Contains(game.Id);
+            var free = game.Price <= 0;
 
-    .store-subtitle {
-        color: #8da1b6;
-        margin-bottom: 28px;
-    }
+            <div style="overflow:hidden;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:#101e2d;">
+                <img src="@game.ImageUrl"
+                     alt="@game.Name"
+                     style="width:100%;height:220px;object-fit:cover;background:#08121d;" />
 
-    .games-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-        gap: 22px;
-    }
+                <div style="padding:18px;">
+                    <h2 style="margin:0 0 7px;font-size:19px;">@game.Name</h2>
 
-    .game-card {
-        background: #101e2d;
-        border: 1px solid rgba(255,255,255,.08);
-        border-radius: 18px;
-        overflow: hidden;
-        transition: .25s ease;
-    }
-
-    .game-card:hover {
-        transform: translateY(-6px);
-        border-color: #1a9fff;
-        box-shadow: 0 18px 45px rgba(26,159,255,.18);
-    }
-
-    .game-image {
-        width: 100%;
-        height: 270px;
-        object-fit: cover;
-        display: block;
-    }
-
-    .game-info {
-        padding: 17px;
-    }
-
-    .game-name {
-        font-size: 19px;
-        font-weight: 700;
-        margin-bottom: 6px;
-    }
-
-    .game-genre {
-        color: #8da1b6;
-        font-size: 13px;
-        margin-bottom: 15px;
-    }
-
-    .game-price {
-        color: #5bc0ff;
-        font-size: 20px;
-        font-weight: 800;
-    }
-
-    .old-price {
-        color: #718297;
-        text-decoration: line-through;
-        font-size: 13px;
-        margin-left: 8px;
-        font-weight: 400;
-    }
-
-    .empty-store {
-        padding: 50px;
-        text-align: center;
-        background: #101e2d;
-        border-radius: 18px;
-        color: #8da1b6;
-    }
-</style>
-
-<div class="store-page">
-
-    <div class="store-title">Game Store</div>
-
-    <div class="store-subtitle">
-        Discover your next game.
-    </div>
-
-    @if (Model.Count == 0)
-    {
-        <div class="empty-store">
-            No games available yet.
-        </div>
-    }
-    else
-    {
-        <div class="games-grid">
-
-            @foreach (var game in Model)
-            {
-                <div class="game-card">
-
-                    <img class="game-image"
-                         src="@game.ImageUrl"
-                         alt="@game.Name">
-
-                    <div class="game-info">
-
-                        <div class="game-name">
-                            @game.Name
-                        </div>
-
-                        <div class="game-genre">
-                            @game.Genre
-                        </div>
-
-                        <div class="game-price">
-                            @(game.DiscountPrice > 0
-                                ? $"{game.DiscountPrice:0.00} DA"
-                                : $"{game.Price:0.00} DA")
-
-                            @if (game.DiscountPrice > 0 && game.Price > game.DiscountPrice)
-                            {
-                                <span class="old-price">
-                                    @($"{game.Price:0.00} DA")
-                                </span>
-                            }
-                        </div>
-
+                    <div style="color:#7f95aa;font-size:12px;margin-bottom:15px;">
+                        @game.Genre
                     </div>
+
+                    <div style="font-size:19px;font-weight:800;color:#58bdff;margin-bottom:15px;">
+                        @(free ? "FREE" : $"{game.DiscountPrice:0.00} DA")
+                    </div>
+
+                    @if (owned && !string.IsNullOrWhiteSpace(game.DownloadUrl))
+                    {
+                        <a href="playgames://install/@game.Id"
+                           style="display:flex;align-items:center;justify-content:center;height:45px;border-radius:10px;background:linear-gradient(135deg,#49b8ff,#0876c8);color:#fff;text-decoration:none;font-size:11px;font-weight:900;">
+                            DOWNLOAD
+                        </a>
+
+                        <div style="text-align:center;color:#71879a;font-size:10px;margin-top:8px;">
+                            Added to your library
+                        </div>
+                    }
+                    else if (free)
+                    {
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <form asp-controller="Library"
+                                  asp-action="Add"
+                                  method="post">
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="gameId"
+                                       value="@game.Id" />
+
+                                <button type="submit"
+                                        style="width:100%;height:45px;border:0;border-radius:10px;background:linear-gradient(135deg,#49b8ff,#0876c8);color:#fff;font-size:11px;font-weight:900;cursor:pointer;">
+                                    GET FOR FREE
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-area="Identity"
+                               asp-page="/Account/Login"
+                               asp-route-returnUrl="/Games"
+                               style="display:flex;align-items:center;justify-content:center;height:45px;border-radius:10px;background:linear-gradient(135deg,#49b8ff,#0876c8);color:#fff;text-decoration:none;font-size:11px;font-weight:900;">
+                                SIGN IN TO GET
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <button disabled
+                                style="width:100%;height:45px;border:0;border-radius:10px;background:#233447;color:#70869a;font-size:11px;font-weight:900;">
+                            BUY NOW
+                        </button>
+                    }
                 </div>
-            }
-
-        </div>
-    }
-
+            </div>
+        }
+    </div>
 </div>
+
+@if (Model.AutoInstallId.HasValue)
+{
+    <script>
+        window.addEventListener("load", function () {
+            window.location.href =
+                "playgames://install/@Model.AutoInstallId.Value";
+        });
+    </script>
+}
