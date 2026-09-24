@@ -10,4 +10,14 @@ public class StoreDbContext : DbContext
     public DbSet<Game> Games => Set<Game>();
     public DbSet<LibraryItem> LibraryItems => Set<LibraryItem>();
     public DbSet<GameKey> GameKeys => Set<GameKey>();
+    public DbSet<SavedGame> SavedGames => Set<SavedGame>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<SavedGame>()
+            .HasIndex(x => new { x.UserId, x.GameId })
+            .IsUnique();
+    }
 }

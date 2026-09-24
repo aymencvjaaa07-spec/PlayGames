@@ -6,6 +6,7 @@
 
 <div style="max-width:1200px;margin:35px auto;padding:0 24px;color:#fff;">
     <h1 style="font-size:34px;margin-bottom:7px;">Game Store</h1>
+
     <p style="color:#8da1b6;margin-bottom:28px;">
         Discover games and build your personal library.
     </p>
@@ -17,12 +18,16 @@
             var free = game.Price <= 0;
 
             <div style="overflow:hidden;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:#101e2d;">
+
                 <img src="@game.ImageUrl"
                      alt="@game.Name"
                      style="width:100%;height:220px;object-fit:cover;background:#08121d;" />
 
                 <div style="padding:18px;">
-                    <h2 style="margin:0 0 7px;font-size:19px;">@game.Name</h2>
+
+                    <h2 style="margin:0 0 7px;font-size:19px;">
+                        @game.Name
+                    </h2>
 
                     <div style="color:#7f95aa;font-size:12px;margin-bottom:15px;">
                         @game.Genre
@@ -32,53 +37,54 @@
                         @(free ? "FREE" : $"{game.DiscountPrice:0.00} DA")
                     </div>
 
-                    @if (owned && !string.IsNullOrWhiteSpace(game.DownloadUrl))
+                    @if (owned)
                     {
-                        <a href="playgames://install/@game.Id"
-                           style="display:flex;align-items:center;justify-content:center;height:45px;border-radius:10px;background:linear-gradient(135deg,#49b8ff,#0876c8);color:#fff;text-decoration:none;font-size:11px;font-weight:900;">
-                            DOWNLOAD
-                        </a>
-
-                        <div style="text-align:center;color:#71879a;font-size:10px;margin-top:8px;">
-                            Added to your library
-                        </div>
-                    }
-                    else if (free)
-                    {
-                        @if (User.Identity?.IsAuthenticated == true)
+                        @if (!string.IsNullOrWhiteSpace(game.DownloadUrl))
                         {
-                            <form asp-controller="Library"
-                                  asp-action="Add"
-                                  method="post">
-                                @Html.AntiForgeryToken()
-
-                                <input type="hidden"
-                                       name="gameId"
-                                       value="@game.Id" />
-
-                                <button type="submit"
-                                        style="width:100%;height:45px;border:0;border-radius:10px;background:linear-gradient(135deg,#49b8ff,#0876c8);color:#fff;font-size:11px;font-weight:900;cursor:pointer;">
-                                    GET FOR FREE
-                                </button>
-                            </form>
+                            <a href="playgames://install/@game.Id"
+                               style="display:flex;align-items:center;justify-content:center;height:45px;border-radius:10px;background:linear-gradient(135deg,#49b8ff,#0876c8);color:#fff;text-decoration:none;font-size:11px;font-weight:900;">
+                                DOWNLOAD
+                            </a>
                         }
                         else
                         {
-                            <a asp-area="Identity"
-                               asp-page="/Account/Login"
-                               asp-route-returnUrl="/Games"
-                               style="display:flex;align-items:center;justify-content:center;height:45px;border-radius:10px;background:linear-gradient(135deg,#49b8ff,#0876c8);color:#fff;text-decoration:none;font-size:11px;font-weight:900;">
-                                SIGN IN TO GET
-                            </a>
+                            <div style="display:flex;align-items:center;justify-content:center;height:45px;border-radius:10px;background:#18354d;color:#58bdff;font-size:11px;font-weight:900;">
+                                SAVED TO LIBRARY
+                            </div>
                         }
+
+                        <div style="text-align:center;color:#71879a;font-size:10px;margin-top:8px;">
+                             Added to your account
+                        </div>
+                    }
+                    else if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <form asp-controller="Games"
+                              asp-action="Save"
+                              method="post">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="gameId"
+                                   value="@game.Id" />
+
+                            <button type="submit"
+                                    style="width:100%;height:45px;border:0;border-radius:10px;background:linear-gradient(135deg,#49b8ff,#0876c8);color:#fff;font-size:11px;font-weight:900;cursor:pointer;">
+                                SAVE GAME
+                            </button>
+                        </form>
                     }
                     else
                     {
-                        <button disabled
-                                style="width:100%;height:45px;border:0;border-radius:10px;background:#233447;color:#70869a;font-size:11px;font-weight:900;">
-                            BUY NOW
-                        </button>
+                        <a asp-area="Identity"
+                           asp-page="/Account/Login"
+                           asp-route-returnUrl="/Games"
+                           style="display:flex;align-items:center;justify-content:center;height:45px;border-radius:10px;background:linear-gradient(135deg,#49b8ff,#0876c8);color:#fff;text-decoration:none;font-size:11px;font-weight:900;">
+                            SIGN IN TO SAVE
+                        </a>
                     }
+
                 </div>
             </div>
         }

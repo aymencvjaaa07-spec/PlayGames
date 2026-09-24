@@ -23,6 +23,7 @@ public class GamesController : Controller
                 .Where(x => x.IsActive)
                 .OrderBy(x => x.Name)
                 .ToListAsync(),
+
             AutoInstallId = install
         };
 
@@ -42,5 +43,49 @@ public class GamesController : Controller
         }
 
         return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Save(int gameId)
+    {
+        if (User.Identity?.IsAuthenticated != true)
+        {
+            return RedirectToPage(
+                "/Account/Login",
+                new
+                {
+                    area = "Identity",
+                    returnUrl = "/Games"
+                });
+        }
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized();
+
+        var game = await _db.Games
+            .FirstOrDefaultAsync(x => x.Id == gameId && x.IsActive);
+
+        if (game == null)
+            return NotFound();
+
+        var exists = await _db.LibraryItems
+            .AnyAsync(x => x.UserId == userId && x.GameId == gameId);
+
+        if (!exists)
+        {
+            _db.LibraryItems.Add(new LibraryItem
+            {
+                UserId = userId,
+                GameId = gameId,
+                AddedAt = DateTime.UtcNow
+            });
+
+            await _db.SaveChangesAsync();
+        }
+
+        return RedirectToAction(nameof(Index));
     }
 }

@@ -23,13 +23,23 @@ public class LibraryController : Controller
         if (string.IsNullOrWhiteSpace(userId))
             return RedirectToPage("/Account/Login", new { area = "Identity" });
 
-        var games = await (
-            from item in _db.LibraryItems
-            join game in _db.Games on item.GameId equals game.Id
-            where item.UserId == userId && game.IsActive
-            orderby item.AddedAt descending
-            select game
-        ).ToListAsync();
+        var gameIds = await _db.LibraryItems
+            .Where(x => x.UserId == userId)
+            .OrderByDescending(x => x.AddedAt)
+            .Select(x => x.GameId)
+            .ToListAsync();
+
+        var games = await _db.Games
+            .Where(x => gameIds.Contains(x.Id) && x.IsActive)
+            .ToListAsync();
+
+        games = gameIds
+            .Join(
+                games,
+                id => id,
+                game => game.Id,
+                (_, game) => game)
+            .ToList();
 
         return View(games);
     }
@@ -49,15 +59,16 @@ public class LibraryController : Controller
         if (game == null)
             return NotFound();
 
-        var exists = await _db.LibraryItems.AnyAsync(
-            x => x.UserId == userId && x.GameId == gameId);
+        var exists = await _db.LibraryItems
+            .AnyAsync(x => x.UserId == userId && x.GameId == gameId);
 
         if (!exists)
         {
             _db.LibraryItems.Add(new PlayGames.Models.LibraryItem
             {
                 UserId = userId,
-                GameId = gameId
+                GameId = gameId,
+                AddedAt = DateTime.UtcNow
             });
 
             await _db.SaveChangesAsync();
