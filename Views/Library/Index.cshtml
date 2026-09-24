@@ -4,155 +4,761 @@
     ViewData["Title"] = "My Library";
 }
 
-<div style="max-width:1250px;margin:40px auto;padding:0 24px;color:#fff;">
+<div class="library-page">
 
-    <div style="margin-bottom:32px;">
-        <h1 style="font-size:36px;margin:0 0 8px;font-weight:900;">
-            My Library
-        </h1>
+    <div class="library-top">
+        <div>
+            <div class="brand">PLAY <span>GAMES</span></div>
+            <h1>My Library</h1>
+            <p>Your personal game collection.</p>
+        </div>
 
-        <p style="color:#8da1b6;margin:0;">
-            Games saved to your PlayGames account.
-        </p>
+        <a asp-controller="Games"
+           asp-action="Index"
+           class="store-button">
+            BACK TO STORE
+        </a>
     </div>
 
     @if (Model == null || Model.Count == 0)
     {
-        <div style="
-            padding:70px 30px;
-            text-align:center;
-            border:1px solid rgba(255,255,255,.08);
-            border-radius:20px;
-            background:#101e2d;
-        ">
-            <div style="font-size:50px;margin-bottom:15px;">
-                
-            </div>
-
-            <h2 style="margin:0 0 10px;">
-                Your library is empty
-            </h2>
-
-            <p style="color:#8095a9;margin-bottom:25px;">
-                Save games from the Game Store and they will appear here.
-            </p>
+        <div class="empty-library">
+            <div class="empty-icon"></div>
+            <h2>Your library is empty</h2>
+            <p>Save games from the Game Store and they will appear here.</p>
 
             <a asp-controller="Games"
                asp-action="Index"
-               style="
-                    display:inline-flex;
-                    align-items:center;
-                    justify-content:center;
-                    height:46px;
-                    padding:0 28px;
-                    border-radius:10px;
-                    background:linear-gradient(135deg,#49b8ff,#0876c8);
-                    color:#fff;
-                    text-decoration:none;
-                    font-size:11px;
-                    font-weight:900;
-               ">
+               class="browse-button">
                 BROWSE GAMES
             </a>
         </div>
     }
     else
     {
-        <div style="
-            display:grid;
-            grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
-            gap:24px;
-        ">
+        <div class="library-grid">
 
             @foreach (var game in Model)
             {
                 var free = game.Price <= 0;
 
-                <div style="
-                    overflow:hidden;
-                    border:1px solid rgba(255,255,255,.08);
-                    border-radius:18px;
-                    background:#101e2d;
-                    box-shadow:0 12px 35px rgba(0,0,0,.18);
-                ">
+                <article class="game-card">
 
-                    <img src="@game.ImageUrl"
-                         alt="@game.Name"
-                         style="
-                            width:100%;
-                            height:220px;
-                            object-fit:cover;
-                            display:block;
-                            background:#08121d;
-                         " />
+                    <div class="game-background"
+                         style="background-image:url('@game.ImageUrl');">
 
-                    <div style="padding:20px;">
+                        <div class="game-gradient"></div>
 
-                        <h2 style="
-                            margin:0 0 8px;
-                            font-size:20px;
-                            font-weight:800;
-                        ">
-                            @game.Name
-                        </h2>
-
-                        <div style="
-                            color:#7f95aa;
-                            font-size:12px;
-                            margin-bottom:14px;
-                        ">
-                            @game.Genre
+                        <div class="game-badge">
+                            @(free ? "FREE" : "OWNED")
                         </div>
 
-                        <div style="
-                            color:#58bdff;
-                            font-size:16px;
-                            font-weight:800;
-                            margin-bottom:16px;
-                        ">
-                            @(free ? "FREE" : $"{game.DiscountPrice:0.00} DA")
+                        <div class="game-title">
+
+                            <div class="game-genre">
+                                @game.Genre
+                            </div>
+
+                            <h2>
+                                @game.Name
+                            </h2>
+
                         </div>
+
+                    </div>
+
+                    <div class="game-panel">
+
+                        <p class="description">
+                            @game.Description
+                        </p>
 
                         @if (!string.IsNullOrWhiteSpace(game.DownloadUrl))
                         {
-                            <a href="playgames://install/@game.Id"
-                               style="
-                                    display:flex;
-                                    align-items:center;
-                                    justify-content:center;
-                                    height:45px;
-                                    border-radius:10px;
-                                    background:linear-gradient(135deg,#49b8ff,#0876c8);
-                                    color:#fff;
-                                    text-decoration:none;
-                                    font-size:11px;
-                                    font-weight:900;
-                               ">
+                            <button type="button"
+                                    class="download-button"
+                                    onclick="startDownload(@game.Id, this)">
+
+                                <span></span>
                                 DOWNLOAD
-                            </a>
+
+                            </button>
+
+                            <div id="download-@game.Id"
+                                 class="download-box">
+
+                                <div class="download-line">
+
+                                    <span class="download-status">
+                                        Ready to download
+                                    </span>
+
+                                    <span class="download-percent">
+                                        0%
+                                    </span>
+
+                                </div>
+
+                                <div class="progress-track">
+
+                                    <div class="progress-bar"></div>
+
+                                </div>
+
+                                <div class="download-size">
+                                    Waiting...
+                                </div>
+
+                            </div>
                         }
                         else
                         {
-                            <div style="
-                                display:flex;
-                                align-items:center;
-                                justify-content:center;
-                                height:45px;
-                                border-radius:10px;
-                                background:#18354d;
-                                color:#58bdff;
-                                font-size:11px;
-                                font-weight:900;
-                            ">
-                                IN YOUR LIBRARY
+                            <div class="unavailable">
+                                DOWNLOAD NOT AVAILABLE
                             </div>
                         }
 
                     </div>
-                </div>
+
+                </article>
             }
 
         </div>
     }
 
 </div>
+
+<style>
+
+    .library-page {
+        min-height: 100vh;
+        padding: 45px 32px 80px;
+
+        background:
+            radial-gradient(
+                circle at 20% 0%,
+                rgba(38,166,255,.12),
+                transparent 35%
+            ),
+            radial-gradient(
+                circle at 90% 20%,
+                rgba(0,105,255,.08),
+                transparent 35%
+            ),
+            #050c15;
+
+        color: #fff;
+    }
+
+    .library-top {
+        max-width: 1320px;
+        margin: 0 auto 35px;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+
+        gap: 25px;
+    }
+
+    .brand {
+        font-size: 13px;
+        font-weight: 900;
+        letter-spacing: 4px;
+        margin-bottom: 9px;
+    }
+
+    .brand span {
+        color: #28aaff;
+    }
+
+    .library-top h1 {
+        margin: 0 0 7px;
+        font-size: 42px;
+        font-weight: 900;
+        letter-spacing: -.8px;
+    }
+
+    .library-top p {
+        margin: 0;
+        color: #738ba0;
+        font-size: 14px;
+    }
+
+    .store-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        height: 44px;
+        padding: 0 20px;
+
+        border-radius: 10px;
+
+        border: 1px solid rgba(50,175,255,.25);
+        background: #0b2032;
+
+        color: #8ed3ff;
+        text-decoration: none;
+
+        font-size: 10px;
+        font-weight: 900;
+
+        transition: .2s;
+    }
+
+    .store-button:hover {
+        background: #123957;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .library-grid {
+        max-width: 1320px;
+        margin: auto;
+
+        display: grid;
+        grid-template-columns:
+            repeat(auto-fill,minmax(350px,1fr));
+
+        gap: 25px;
+    }
+
+    .game-card {
+        overflow: hidden;
+
+        border-radius: 22px;
+
+        background: #0b1724;
+
+        border: 1px solid rgba(255,255,255,.07);
+
+        box-shadow:
+            0 20px 55px rgba(0,0,0,.35);
+
+        transition:
+            transform .25s,
+            border-color .25s,
+            box-shadow .25s;
+    }
+
+    .game-card:hover {
+        transform: translateY(-7px);
+
+        border-color:
+            rgba(40,170,255,.38);
+
+        box-shadow:
+            0 30px 70px rgba(0,0,0,.48);
+    }
+
+    .game-background {
+        position: relative;
+
+        height: 245px;
+
+        background-position: center;
+        background-size: cover;
+
+        overflow: hidden;
+    }
+
+    .game-gradient {
+        position: absolute;
+        inset: 0;
+
+        background:
+            linear-gradient(
+                to bottom,
+                rgba(3,10,18,.10) 0%,
+                rgba(3,10,18,.18) 35%,
+                rgba(3,10,18,.88) 100%
+            );
+    }
+
+    .game-badge {
+        position: absolute;
+
+        top: 16px;
+        right: 16px;
+
+        padding: 7px 11px;
+
+        border-radius: 8px;
+
+        background:
+            rgba(3,16,28,.78);
+
+        border:
+            1px solid rgba(67,190,255,.30);
+
+        color: #6ac8ff;
+
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: .7px;
+
+        backdrop-filter: blur(10px);
+    }
+
+    .game-title {
+        position: absolute;
+
+        left: 20px;
+        right: 20px;
+        bottom: 18px;
+    }
+
+    .game-genre {
+        margin-bottom: 5px;
+
+        color: #58c0ff;
+
+        font-size: 9px;
+        font-weight: 900;
+
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .game-title h2 {
+        margin: 0;
+
+        font-size: 27px;
+        line-height: 1.05;
+
+        font-weight: 900;
+
+        text-shadow:
+            0 3px 18px rgba(0,0,0,.7);
+    }
+
+    .game-panel {
+        padding: 19px;
+    }
+
+    .description {
+        min-height: 38px;
+
+        margin: 0 0 17px;
+
+        color: #8197aa;
+
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    .download-button {
+        width: 100%;
+        height: 47px;
+
+        border: 0;
+        border-radius: 11px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #4dc0ff,
+                #0876c8
+            );
+
+        color: white;
+
+        font-size: 10px;
+        font-weight: 900;
+
+        cursor: pointer;
+
+        box-shadow:
+            0 9px 25px rgba(8,118,200,.25);
+
+        transition: .2s;
+    }
+
+    .download-button:hover {
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 13px 30px rgba(8,118,200,.40);
+    }
+
+    .download-button:disabled {
+        opacity: .6;
+        cursor: wait;
+        transform: none;
+    }
+
+    .download-box {
+        display: none;
+
+        margin-top: 13px;
+
+        padding: 13px;
+
+        border-radius: 11px;
+
+        background: #071522;
+
+        border:
+            1px solid rgba(52,170,255,.15);
+    }
+
+    .download-line {
+        display: flex;
+        justify-content: space-between;
+
+        margin-bottom: 9px;
+    }
+
+    .download-status {
+        color: #9db5c8;
+
+        font-size: 9px;
+        font-weight: 700;
+    }
+
+    .download-percent {
+        color: #5fc4ff;
+
+        font-size: 9px;
+        font-weight: 900;
+    }
+
+    .progress-track {
+        width: 100%;
+        height: 7px;
+
+        overflow: hidden;
+
+        border-radius: 10px;
+
+        background: #14293a;
+    }
+
+    .progress-bar {
+        width: 0%;
+        height: 100%;
+
+        border-radius: 10px;
+
+        background:
+            linear-gradient(
+                90deg,
+                #49b8ff,
+                #0876c8
+            );
+
+        transition: width .15s linear;
+    }
+
+    .download-size {
+        margin-top: 8px;
+
+        color: #60798c;
+
+        font-size: 8px;
+    }
+
+    .unavailable {
+        height: 47px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 11px;
+
+        background: #122333;
+
+        color: #718da2;
+
+        font-size: 9px;
+        font-weight: 900;
+    }
+
+    .empty-library {
+        max-width: 700px;
+        margin: 80px auto;
+
+        padding: 65px 30px;
+
+        text-align: center;
+
+        border-radius: 22px;
+
+        border:
+            1px solid rgba(255,255,255,.07);
+
+        background:
+            linear-gradient(
+                145deg,
+                #0d1d2d,
+                #08131f
+            );
+    }
+
+    .empty-icon {
+        font-size: 52px;
+        margin-bottom: 15px;
+    }
+
+    .empty-library h2 {
+        margin: 0 0 10px;
+    }
+
+    .empty-library p {
+        color: #8095a9;
+        margin-bottom: 25px;
+    }
+
+    .browse-button {
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        height: 46px;
+        padding: 0 28px;
+
+        border-radius: 10px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #49b8ff,
+                #0876c8
+            );
+
+        color: white;
+        text-decoration: none;
+
+        font-size: 10px;
+        font-weight: 900;
+    }
+
+    @@media(max-width:700px) {
+
+        .library-page {
+            padding: 30px 17px 55px;
+        }
+
+        .library-top {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .library-top h1 {
+            font-size: 34px;
+        }
+
+        .library-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .game-background {
+            height: 225px;
+        }
+
+    }
+
+</style>
+
+<script>
+
+    async function startDownload(gameId, button) {
+
+        const box =
+            document.getElementById(
+                "download-" + gameId
+            );
+
+        if (!box)
+            return;
+
+        const status =
+            box.querySelector(
+                ".download-status"
+            );
+
+        const percent =
+            box.querySelector(
+                ".download-percent"
+            );
+
+        const bar =
+            box.querySelector(
+                ".progress-bar"
+            );
+
+        const size =
+            box.querySelector(
+                ".download-size"
+            );
+
+        button.disabled = true;
+
+        button.innerHTML =
+            "DOWNLOADING...";
+
+        box.style.display =
+            "block";
+
+        try {
+
+            const response =
+                await fetch(
+                    "/Library/Download?gameId=" +
+                    gameId
+                );
+
+            if (!response.ok)
+                throw new Error(
+                    "Download failed"
+                );
+
+            const total =
+                Number(
+                    response.headers.get(
+                        "Content-Length"
+                    )
+                ) || 0;
+
+            const reader =
+                response.body.getReader();
+
+            let received = 0;
+
+            const chunks = [];
+
+            while (true) {
+
+                const result =
+                    await reader.read();
+
+                if (result.done)
+                    break;
+
+                chunks.push(
+                    result.value
+                );
+
+                received +=
+                    result.value.length;
+
+                if (total > 0) {
+
+                    const current =
+                        Math.round(
+                            received /
+                            total *
+                            100
+                        );
+
+                    percent.textContent =
+                        current + "%";
+
+                    bar.style.width =
+                        current + "%";
+
+                    status.textContent =
+                        "Downloading...";
+
+                    size.textContent =
+                        formatBytes(received) +
+                        " / " +
+                        formatBytes(total);
+
+                }
+                else {
+
+                    status.textContent =
+                        "Downloading...";
+
+                    size.textContent =
+                        formatBytes(received);
+
+                }
+            }
+
+            const blob =
+                new Blob(chunks);
+
+            const url =
+                URL.createObjectURL(blob);
+
+            const link =
+                document.createElement("a");
+
+            link.href = url;
+
+            link.download =
+                "game.zip";
+
+            document.body.appendChild(link);
+
+            link.click();
+
+            link.remove();
+
+            URL.revokeObjectURL(url);
+
+            percent.textContent =
+                "100%";
+
+            bar.style.width =
+                "100%";
+
+            status.textContent =
+                "Download complete";
+
+            size.textContent =
+                formatBytes(received);
+
+            button.innerHTML =
+                " DOWNLOADED";
+
+            button.disabled = false;
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+            status.textContent =
+                "Download failed";
+
+            button.innerHTML =
+                "RETRY DOWNLOAD";
+
+            button.disabled = false;
+
+        }
+    }
+
+    function formatBytes(bytes) {
+
+        if (bytes === 0)
+            return "0 B";
+
+        const units = [
+            "B",
+            "KB",
+            "MB",
+            "GB"
+        ];
+
+        const index =
+            Math.floor(
+                Math.log(bytes) /
+                Math.log(1024)
+            );
+
+        return (
+            bytes /
+            Math.pow(1024,index)
+        ).toFixed(1)
+        + " " +
+        units[index];
+    }
+
+</script>

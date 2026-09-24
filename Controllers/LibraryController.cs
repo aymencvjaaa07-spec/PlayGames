@@ -74,15 +74,50 @@ public class LibraryController : Controller
             await _db.SaveChangesAsync();
         }
 
-        if (game.Price <= 0 &&
-            !string.IsNullOrWhiteSpace(game.DownloadUrl))
-        {
-            return RedirectToAction(
-                "Index",
-                "Games",
-                new { install = game.Id });
-        }
-
         return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Download(int gameId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized();
+
+        var owned = await _db.LibraryItems
+            .AnyAsync(x => x.UserId == userId && x.GameId == gameId);
+
+        if (!owned)
+            return Forbid();
+
+        var game = await _db.Games
+            .FirstOrDefaultAsync(x => x.Id == gameId && x.IsActive);
+
+        if (game == null || string.IsNullOrWhiteSpace(game.DownloadUrl))
+            return NotFound();
+
+        using var client = new HttpClient();
+
+        var response = await client.GetAsync(
+            game.DownloadUrl,
+            HttpCompletionOption.ResponseHeadersRead);
+
+        if (!response.IsSuccessStatusCode)
+            return StatusCode((int)response.StatusCode);
+
+        var stream = await response.Content.ReadAsStreamAsync();
+
+        var contentType =
+            response.Content.Headers.ContentType?.ToString()
+            ?? "application/octet-stream";
+
+        var fileName =
+            Path.GetFileName(new Uri(game.DownloadUrl).AbsolutePath);
+
+        if (string.IsNullOrWhiteSpace(fileName))
+            fileName = $"{game.Name}.zip";
+
+        return File(stream, contentType, fileName);
     }
 }
